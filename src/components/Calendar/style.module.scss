@@ -1,0 +1,19 @@
+.calendar {
+  display: flex;
+  margin: 0 auto;
+  width: min-content;
+  gap: 2px;
+}
+
+.week {
+  position: relative;
+}
+
+.month {
+  position: absolute;
+  transform: translateY(-100%);
+  top: -5px;
+  color: #959494;
+  font-size: 12px;
+  font-weight: 400;
+}
