@@ -2,10 +2,13 @@ import { unionClasses } from '../../utils/unionClasses';
 
 import s from './style.module.scss';
 
-type CellProps = {
-  date: string;
-  contributions: number;
-};
+type CellProps =
+  | {
+      isExample?: never;
+      date: string;
+      contributions: number;
+    }
+  | { isExample: true; date?: never; contributions: number };
 
 const getClassName = (contributions: number): string => {
   if (contributions >= 30) {
@@ -23,14 +26,37 @@ const getClassName = (contributions: number): string => {
   return s.zero;
 };
 
+const getRangeName = (contributions: number): string => {
+  if (contributions >= 30) {
+    return '30+';
+  }
+  if (contributions >= 20) {
+    return '20-29';
+  }
+  if (contributions >= 10) {
+    return '10-19';
+  }
+  if (contributions >= 1) {
+    return '1-9';
+  }
+  return 'No';
+};
+
 export function Cell(props: CellProps) {
   return (
     <div className={unionClasses(s.cell, getClassName(props.contributions))}>
       <div className={s.stat}>
         <p className={s.contr}>
-          {props.contributions === 0 ? 'No' : props.contributions} contributions
+          {props.isExample
+            ? getRangeName(props.contributions)
+            : props.contributions === 0
+            ? 'No'
+            : props.contributions}{' '}
+          contributions
         </p>
-        <p className={s.date}>{new Date(props.date).toDateString()}</p>
+        {props.date && (
+          <p className={s.date}>{new Date(props.date).toDateString()}</p>
+        )}
       </div>
     </div>
   );

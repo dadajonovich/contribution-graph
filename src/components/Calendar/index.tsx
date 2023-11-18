@@ -4,11 +4,16 @@ import { getNextSunday } from '../../utils/getNextSunday';
 import { createMatrix } from '../../utils/createMatrix';
 import { monthToString } from '../../utils/monthToString';
 import { Cell } from '../Cell';
+import { Description } from '../Description';
 
 import s from './style.module.scss';
 
+export type Data = {
+  [date: string]: number;
+};
+
 type CalendarProps = {
-  data: { [date: string]: number };
+  data: Data;
 };
 
 const ONE_DAY_AS_MILLIS = 60 * 60 * 24 * 1000;
@@ -42,6 +47,9 @@ export const Calendar = (props: CalendarProps) => {
       if (firstDiffDays > 0) {
         data.unshift([formatDate(new Date(firstDate)), 0]);
       }
+    } else {
+      data.push([formatDate(new Date(firstDate)), 0]);
+      data.push([formatDate(new Date(currentDate)), 0]);
     }
 
     for (let i = data.length - 1; i >= 1; i--) {
@@ -55,7 +63,6 @@ export const Calendar = (props: CalendarProps) => {
           const d = new Date((prevDate + index + 1) * ONE_DAY_AS_MILLIS);
           return formatDate(d);
         });
-
         data.splice(
           i,
           0,
@@ -69,32 +76,41 @@ export const Calendar = (props: CalendarProps) => {
 
   let prevMonth = 0;
   return (
-    <section className={s.calendar}>
-      <div className={s.weekNames}>
-        <p>Пн</p>
-        <p>Ср</p>
-        <p>Пт</p>
-      </div>
+    <div className={s.wrapper}>
+      <section className={s.calendar}>
+        <div className={s.weekNames}>
+          <p>
+            <span>Пн</span>
+          </p>
+          <p>
+            <span>Ср</span>
+          </p>
+          <p>
+            <span>Пт</span>
+          </p>
+        </div>
 
-      {matrix.map((column, index) => {
-        let isDrawMonth = false;
-        const currentMonth = new Date(column[0][0]).getMonth() + 1;
-        if (currentMonth !== prevMonth) {
-          if (prevMonth !== 0) isDrawMonth = true;
-          prevMonth = currentMonth;
-        }
+        {matrix.map((column, index) => {
+          let isDrawMonth = false;
+          const currentMonth = new Date(column[0][0]).getMonth() + 1;
+          if (currentMonth !== prevMonth) {
+            if (prevMonth !== 0) isDrawMonth = true;
+            prevMonth = currentMonth;
+          }
 
-        return (
-          <div className={s.week} key={index}>
-            {isDrawMonth && (
-              <div className={s.month}>{monthToString(currentMonth)}</div>
-            )}
-            {column.map(([date, contributions]) => (
-              <Cell date={date} contributions={contributions} key={date} />
-            ))}
-          </div>
-        );
-      })}
-    </section>
+          return (
+            <div className={s.week} key={index}>
+              {isDrawMonth && (
+                <div className={s.month}>{monthToString(currentMonth)}</div>
+              )}
+              {column.map(([date, contributions]) => (
+                <Cell date={date} contributions={contributions} key={date} />
+              ))}
+            </div>
+          );
+        })}
+      </section>
+      <Description />
+    </div>
   );
 };
