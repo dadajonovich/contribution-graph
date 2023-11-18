@@ -27,7 +27,9 @@ export function Cell(props: CellProps) {
   return (
     <div className={unionClasses(s.cell, getClassName(props.contributions))}>
       <div className={s.stat}>
-        <p className={s.contr}>{props.contributions} contributions</p>
+        <p className={s.contr}>
+          {props.contributions === 0 ? 'No' : props.contributions} contributions
+        </p>
         <p className={s.date}>{new Date(props.date).toDateString()}</p>
       </div>
     </div>
